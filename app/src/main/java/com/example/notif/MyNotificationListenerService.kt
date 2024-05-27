@@ -11,18 +11,44 @@ class MyNotificationListenerService : NotificationListenerService() {
         val notification = sbn.notification
         val extras = notification.extras
         val title = extras.getString(Notification.EXTRA_TITLE)
-        val tickerText = sbn.notification.tickerText?.toString()
+        var tickerText = sbn.notification.tickerText?.toString()
         val packageName = sbn.packageName
 
-        if (title == null) {
+        if (title == null || tickerText == null) {
             return
         }
 
-        Log.d("NotificationListener", "Notification Posted: $title from package: $packageName")
-        Log.d("NotificationListener", "Notification Posted: $tickerText from package: $packageName")
+        // FROM INSTAGRAM
+        if (isFromInstagram(packageName)) {
+            Log.d("NotificationListener", "From INSTAGRAM")
+        }
+
+        // FROM FACEBOOK MESSENGER
+        else if (isFromMessenger(packageName)) {
+            Log.d("NotificationListener", "From MESSENGER")
+            val senderLength = title.length
+            val tickerTextStartIndex = senderLength + 2
+            tickerText = tickerText.substring(tickerTextStartIndex, tickerText.length)
+        }
+        else {
+            return
+        }
+
+        Log.d("NotificationListener", "Message Sender: $title")
+        Log.d("NotificationListener", "Notification TickerText: $tickerText")
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         println("onNotificationRemoved")
+    }
+
+    private fun isFromInstagram(packageName: String): Boolean {
+        val instagramPackageName = "com.instagram.android"
+        return instagramPackageName == packageName
+    }
+
+    private fun isFromMessenger(packageName: String): Boolean {
+        val messengerPackageName = "com.facebook.orca"
+        return messengerPackageName == packageName
     }
 }
