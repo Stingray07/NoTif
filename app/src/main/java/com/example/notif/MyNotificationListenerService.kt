@@ -4,6 +4,7 @@ import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import java.lang.StringBuilder
 
 class MyNotificationListenerService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -26,9 +27,9 @@ class MyNotificationListenerService : NotificationListenerService() {
         // FROM FACEBOOK MESSENGER
         else if (isFromMessenger(packageName)) {
             Log.d("NotificationListener", "From MESSENGER")
-            val senderLength = title.length
-            val tickerTextStartIndex = senderLength + 2
-            tickerText = tickerText.substring(tickerTextStartIndex, tickerText.length)
+            val sender = getSender(tickerText)
+            Log.d("NotificationListener", "sender = $sender")
+
         }
         else {
             return
@@ -50,5 +51,16 @@ class MyNotificationListenerService : NotificationListenerService() {
     private fun isFromMessenger(packageName: String): Boolean {
         val messengerPackageName = "com.facebook.orca"
         return messengerPackageName == packageName
+    }
+
+    private fun getSender(tickerText: String): StringBuilder {
+        val sender = StringBuilder("")
+        for (char in tickerText) {
+            if (char == ':') {
+                return sender
+            }
+            sender.append(char)
+        }
+        return sender
     }
 }
