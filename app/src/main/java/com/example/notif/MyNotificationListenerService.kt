@@ -15,23 +15,25 @@ class MyNotificationListenerService : NotificationListenerService() {
 
         val notification = sbn.notification
         val extras = notification.extras
-        val title = extras.getString(Notification.EXTRA_TITLE)
+        val conversationName = extras.getString(Notification.EXTRA_TITLE)
         val tickerText = sbn.notification.tickerText?.toString()
         val packageName = sbn.packageName
 
-        if (title == null || tickerText == null) {
+        if (conversationName == null || tickerText == null) {
             return
         }
+
+        var sender = StringBuilder()
 
         when (packageName) {
             INSTAGRAM_PACKAGE_NAME -> {
                 Log.d("NotificationListener", "From INSTAGRAM")
+                sender = StringBuilder(conversationName)
             }
 
             MESSENGER_PACKAGE_NAME -> {
                 Log.d("NotificationListener", "From MESSENGER")
-                val sender = getSender(tickerText)
-                Log.d("NotificationListener", "sender = $sender")
+                sender = getSender(tickerText)
             }
 
             else -> {
@@ -39,7 +41,12 @@ class MyNotificationListenerService : NotificationListenerService() {
             }
         }
 
-        Log.d("NotificationListener", "Message Sender: $title")
+        if (isFromGroupChat(sender, conversationName)) {
+            Log.d("NotificationListener", "IS FROM GC")
+        }
+
+        Log.d("NotificationListener", "Conversation Name: $conversationName")
+        Log.d("NotificationListener", "Message Sender: $sender")
         Log.d("NotificationListener", "Notification TickerText: $tickerText")
     }
 
@@ -58,7 +65,8 @@ class MyNotificationListenerService : NotificationListenerService() {
         return sender
     }
 
-    private fun isFromGroupChat(sender: String, title: String): Boolean {
-        return sender == title
+    private fun isFromGroupChat(sender: StringBuilder, title: String): Boolean {
+        val stringSender = sender.toString()
+        return stringSender != title
     }
 }
