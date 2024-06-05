@@ -6,3 +6,10 @@ object DatabaseContract {
         const val TABLE_NAME = "chat"
     }
 }
+
+// Conversation
+// ID            ConvName          IsGC?       Platform
+// Message
+// ID            Content           Sender(User)      Conversation(Conversation)
+// User
+// ID            Username

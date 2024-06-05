@@ -23,7 +23,7 @@ class MyNotificationListenerService : NotificationListenerService() {
             return
         }
 
-        var sender = StringBuilder()
+        val sender: StringBuilder
 
         when (packageName) {
             INSTAGRAM_PACKAGE_NAME -> {
@@ -38,6 +38,7 @@ class MyNotificationListenerService : NotificationListenerService() {
 
             else -> {
                 println("Package Not Found")
+                return
             }
         }
 
