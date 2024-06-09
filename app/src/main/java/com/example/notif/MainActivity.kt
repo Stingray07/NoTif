@@ -36,6 +36,8 @@ class MainActivity : ComponentActivity() {
         } else {
             Toast.makeText(this, "Notification Access Granted", Toast.LENGTH_SHORT).show()
         }
+
+
     }
 
     private fun isNotificationServiceEnabled(context:Context): Boolean {

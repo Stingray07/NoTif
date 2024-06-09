@@ -16,6 +16,7 @@ object DatabaseContract {
         const val COLUMN_NAME_CONTENT = "content"
         const val COLUMN_NAME_SENDER = "sender"
         const val COLUMN_NAME_CONVERSATION = "conversation"
+        const val COLUMN_NAME_DATE_TIME = "datetime"
     }
 
     object User: BaseColumns {
