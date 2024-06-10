@@ -46,9 +46,25 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val SQL_DELETE_USERS = "DROP TABLE IF EXISTS ${DatabaseContract.User.TABLE_NAME}"
     }
 
-    fun insertUser() {
-        TODO()
+    fun insertUser(db: SQLiteDatabase, username: String) {
+        val SQL_INSERT_QUERY = "INSERT INTO user (username) VALUES (?)".trimIndent()
+
+        val stmt = db.compileStatement(SQL_INSERT_QUERY)
+        stmt.bindString(1, username)
+        stmt.executeInsert()
     }
+
+
+    fun insertConversation(db: SQLiteDatabase, conversationName: String, isGC: Int, platform: String) {
+        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversation_name, is_gc, platform) VALUES (?, ?, ?)".trimIndent()
+
+        val stmt = db.compileStatement(SQL_INSERT_QUERY)
+        stmt.bindString(1, conversationName)
+        stmt.bindLong(2, isGC.toLong())
+        stmt.bindString(3, platform)
+        stmt.executeInsert()
+    }
+
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_CONVERSATIONS)
