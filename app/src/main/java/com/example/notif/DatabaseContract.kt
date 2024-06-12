@@ -25,3 +25,11 @@ object DatabaseContract {
         const val COLUMN_NAME_USERNAME = "username"
     }
 }
+
+data class Message(
+    val id: Int,
+    val content: String,
+    val sender: Int,
+    val conversation: Int,
+    val datetime: String
+)

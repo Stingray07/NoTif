@@ -18,6 +18,9 @@ import com.example.notif.ui.theme.NoTifTheme
 
 
 class MainActivity : ComponentActivity() {
+
+        private lateinit var dbHelper: DatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -29,7 +32,9 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        showToast(this, "Hello World")
+        dbHelper = DatabaseHelper(this)
+
+
 
         if (!isNotificationServiceEnabled(this)) {
             requestNotificationPermission()
@@ -38,6 +43,11 @@ class MainActivity : ComponentActivity() {
         }
 
 
+    }
+
+    override fun onDestroy() {
+        dbHelper.close()
+        super.onDestroy()
     }
 
     private fun isNotificationServiceEnabled(context:Context): Boolean {

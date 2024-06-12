@@ -2,7 +2,11 @@ package com.example.notif
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.database.Cursor
 import android.database.sqlite.SQLiteOpenHelper
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -52,8 +56,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val stmt = db.compileStatement(SQL_INSERT_QUERY)
         stmt.bindString(1, username)
         stmt.executeInsert()
-    }
 
+        println("INSERT USER SUCCESSFUL")
+    }
 
     fun insertConversation(db: SQLiteDatabase, conversationName: String, isGC: Int, platform: String) {
         val SQL_INSERT_QUERY = "INSERT INTO conversation (conversation_name, is_gc, platform) VALUES (?, ?, ?)".trimIndent()
@@ -63,8 +68,51 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         stmt.bindLong(2, isGC.toLong())
         stmt.bindString(3, platform)
         stmt.executeInsert()
+
+        println("INSERT CONVERSATION SUCCESSFUL")
     }
 
+    fun insertMessage(db: SQLiteDatabase, content: String, sender: Int, conversation: Int) {
+        val SQL_INSERT_QUERY = "INSERT INTO message (content, sender, conversation, datetime) VALUES (?, ?, ?, ?)".trimIndent()
+
+        val stmt = db.compileStatement(SQL_INSERT_QUERY)
+
+        val currentDateTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault()).format(Date())
+
+        stmt.bindString(1, content)
+        stmt.bindLong(2, sender.toLong())
+        stmt.bindLong(3, conversation.toLong())
+        stmt.bindString(4, currentDateTime)
+        stmt.executeInsert()
+
+        println("INSERT MESSAGE SUCCESSFUL")
+    }
+
+    fun getAllMessages(db: SQLiteDatabase): List<Message> {
+        val messages = mutableListOf<Message>()
+        val cursor: Cursor = db.query(
+            DatabaseContract.Message.TABLE_NAME,  // The table to query
+            null,                                 // The columns to return (null means all columns)
+            null,                                 // The columns for the WHERE clause
+            null,                                 // The values for the WHERE clause
+            null,                                 // Group the rows
+            null,                                 // Filter by row groups
+            null                                  // The sort order
+        )
+
+        with(cursor) {
+            while (moveToNext()) {
+                val id = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_ID))
+                val content = getString(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_CONTENT))
+                val sender = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_SENDER))
+                val conversation = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_CONVERSATION))
+                val datetime = getString(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_DATE_TIME))
+                messages.add(Message(id, content, sender, conversation, datetime))
+            }
+        }
+        cursor.close()
+        return messages
+    }
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_CONVERSATIONS)
