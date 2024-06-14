@@ -33,8 +33,13 @@ class MainActivity : ComponentActivity() {
         }
 
         dbHelper = DatabaseHelper(this)
+        val db = dbHelper.writableDatabase
 
+        dbHelper.insertUser(db, "Stingray")
+        dbHelper.insertConversation(db, "HAHAY", 0, "Instagram")
+        dbHelper.insertMessage(db, "TEST MESSAGE", 1, 1)
 
+        println(dbHelper.getAllMessages(db))
 
         if (!isNotificationServiceEnabled(this)) {
             requestNotificationPermission()

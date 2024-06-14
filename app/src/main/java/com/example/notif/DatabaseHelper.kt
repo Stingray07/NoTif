@@ -31,6 +31,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             ${DatabaseContract.Message.COLUMN_NAME_ID} INTEGER PRIMARY KEY,
             ${DatabaseContract.Message.COLUMN_NAME_CONTENT} TEXT,
             ${DatabaseContract.Message.COLUMN_NAME_DATE_TIME} TEXT,
+            ${DatabaseContract.Message.COLUMN_NAME_SENDER} INTEGER,
+            ${DatabaseContract.Message.COLUMN_NAME_CONVERSATION} INTEGER,
             FOREIGN KEY (${DatabaseContract.Message.COLUMN_NAME_SENDER}) REFERENCES ${DatabaseContract.User.TABLE_NAME}(${DatabaseContract.User.COLUMN_NAME_ID}),
             FOREIGN KEY (${DatabaseContract.Message.COLUMN_NAME_CONVERSATION}) REFERENCES ${DatabaseContract.Conversation.TABLE_NAME}(${DatabaseContract.Conversation.COLUMN_NAME_ID})
             )    
@@ -61,7 +63,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun insertConversation(db: SQLiteDatabase, conversationName: String, isGC: Int, platform: String) {
-        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversation_name, is_gc, platform) VALUES (?, ?, ?)".trimIndent()
+        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, isGC, platform) VALUES (?, ?, ?)".trimIndent()
 
         val stmt = db.compileStatement(SQL_INSERT_QUERY)
         stmt.bindString(1, conversationName)
