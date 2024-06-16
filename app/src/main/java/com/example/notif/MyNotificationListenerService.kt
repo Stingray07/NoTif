@@ -1,7 +1,6 @@
 package com.example.notif
 
 import android.app.Notification
-import android.content.Context
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -25,15 +24,17 @@ class MyNotificationListenerService : NotificationListenerService() {
         }
 
         val sender: StringBuilder
+        val platform: String
+        val isGC: Int
 
         when (packageName) {
             INSTAGRAM_PACKAGE_NAME -> {
-                Log.d("NotificationListener", "From INSTAGRAM")
+                platform = "INSTAGRAM"
                 sender = StringBuilder(conversationName)
             }
 
             MESSENGER_PACKAGE_NAME -> {
-                Log.d("NotificationListener", "From MESSENGER")
+                platform = "MESSENGER"
                 sender = getSender(tickerText)
             }
 
@@ -44,12 +45,13 @@ class MyNotificationListenerService : NotificationListenerService() {
         }
 
         if (isFromGroupChat(sender, conversationName)) {
-            Log.d("NotificationListener", "IS FROM GC")
+            isGC = 1
         }
 
         Log.d("NotificationListener", "Conversation Name: $conversationName")
         Log.d("NotificationListener", "Message Sender: $sender")
         Log.d("NotificationListener", "Notification TickerText: $tickerText")
+
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
@@ -71,4 +73,6 @@ class MyNotificationListenerService : NotificationListenerService() {
         val stringSender = sender.toString()
         return stringSender != title
     }
+
+
 }
