@@ -49,7 +49,7 @@ class MyNotificationListenerService : NotificationListenerService() {
         println("onNotificationRemoved")
     }
 
-    private fun getSender(tickerText: String): String {
+    private fun getSenderMessenger(tickerText: String): String {
         val sender = StringBuilder("")
         for (char in tickerText) {
             if (char == ':') {
@@ -60,6 +60,22 @@ class MyNotificationListenerService : NotificationListenerService() {
         return sender.toString()
     }
 
+    private fun getSenderInstagram(tickerText: String): String {
+        val sender = StringBuilder("")
+        var addToSender = false
+        for (char in tickerText) {
+            if (char == ':') {
+                addToSender = true
+                continue
+            }
+
+            if (addToSender) {
+                sender.append(char)
+            }
+        }
+        return sender.toString().substring(1)
+    }
+
     private fun isFromGroupChat(sender: String, title: String): Boolean {
         return sender != title
     }
@@ -67,10 +83,11 @@ class MyNotificationListenerService : NotificationListenerService() {
     private fun getSenderAndPlatform(packageName: String, conversationName: String, tickerText: String): Pair<String, String>? {
         return when (packageName) {
             "com.instagram.android" -> {
-                Pair(conversationName, "INSTAGRAM")
+                Pair(getSenderInstagram(conversationName), "INSTAGRAM")
             }
+
             "com.facebook.orca" -> {
-                Pair(getSender(tickerText), "MESSENGER")
+                Pair(getSenderMessenger(tickerText), "MESSENGER")
             }
             else -> {
                 Log.d("NotificationListener", "Package Not Found")
