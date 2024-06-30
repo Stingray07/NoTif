@@ -20,7 +20,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             CREATE TABLE ${DatabaseContract.Conversation.TABLE_NAME} (
             ${DatabaseContract.Conversation.COLUMN_NAME_ID} INTEGER PRIMARY KEY,
             ${DatabaseContract.Conversation.COLUMN_NAME_CONVERSATION_NAME} TEXT,
-            ${DatabaseContract.Conversation.COLUMN_NAME_IS_GC} INTEGER,
             ${DatabaseContract.Conversation.COLUMN_NAME_PLATFORM} TEXT
             )
             """
@@ -62,12 +61,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         println("INSERT USER SUCCESSFUL")
     }
 
-    fun insertConversation(db: SQLiteDatabase, conversationName: String, isGC: Int, platform: String) {
-        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, isGC, platform) VALUES (?, ?, ?)".trimIndent()
+    fun insertConversation(db: SQLiteDatabase, conversationName: String, platform: String) {
+        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, platform) VALUES (?, ?, ?)".trimIndent()
 
         val stmt = db.compileStatement(SQL_INSERT_QUERY)
         stmt.bindString(1, conversationName)
-        stmt.bindLong(2, isGC.toLong())
         stmt.bindString(3, platform)
         stmt.executeInsert()
 

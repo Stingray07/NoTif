@@ -6,7 +6,6 @@ object DatabaseContract {
         const val TABLE_NAME = "conversation"
         const val COLUMN_NAME_ID = "id"
         const val COLUMN_NAME_CONVERSATION_NAME = "conversationName"
-        const val COLUMN_NAME_IS_GC = "isGC"
         const val COLUMN_NAME_PLATFORM = "platform"
     }
 

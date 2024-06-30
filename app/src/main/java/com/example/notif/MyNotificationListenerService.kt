@@ -26,20 +26,30 @@ class MyNotificationListenerService : NotificationListenerService() {
             val conversationName = extras.getString(Notification.EXTRA_TITLE)
             val tickerText = sbn.notification.tickerText?.toString()
             val packageName = sbn.packageName
+            val message: String
 
             if (conversationName == null || tickerText == null) {
                 return
             }
 
             val (sender, platform) = getSenderAndPlatform(packageName, conversationName, tickerText) ?: return
-            val isGC = if (isFromGroupChat(sender, conversationName)) 1 else 0
-            println(isGC)
+
+            if (platform == "MESSENGER") {
+                message = getMessageMessenger(tickerText, sender)
+            }
 
             Log.d("NotificationListener", "Conversation Name: $conversationName")
             Log.d("NotificationListener", "Message Sender: $sender")
             Log.d("NotificationListener", "Notification TickerText: $tickerText")
 
-//            dbHelper.insertMessage(db, conversationName, sender, platform, isGC, tickerText)
+            // check user if exists
+            // add to db if not
+            // check convo if exists?
+            // add to db if not
+            // insert message
+            // INITIAL PLAN
+
+            dbHelper.insertMessage(db, conversationName, sender, platform, tickerText)
         } finally {
             db.close()
         }
@@ -47,6 +57,10 @@ class MyNotificationListenerService : NotificationListenerService() {
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
         println("onNotificationRemoved")
+    }
+
+    private fun getMessageMessenger(tickerText: String, sender: String): String {
+        return tickerText.substring(sender.length + 2)
     }
 
     private fun getSenderMessenger(tickerText: String): String {
@@ -74,10 +88,6 @@ class MyNotificationListenerService : NotificationListenerService() {
             }
         }
         return sender.toString().substring(1)
-    }
-
-    private fun isFromGroupChat(sender: String, title: String): Boolean {
-        return sender != title
     }
 
     private fun getSenderAndPlatform(packageName: String, conversationName: String, tickerText: String): Pair<String, String>? {
