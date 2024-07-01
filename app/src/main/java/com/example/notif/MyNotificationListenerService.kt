@@ -42,12 +42,7 @@ class MyNotificationListenerService : NotificationListenerService() {
             Log.d("NotificationListener", "Message Sender: $sender")
             Log.d("NotificationListener", "Notification TickerText: $tickerText")
 
-            // check user if exists
-            // add to db if not
-            // check convo if exists?
-            // add to db if not
-            // insert message
-            // INITIAL PLAN
+//            try testing returnUserID and returnConversationID functions
 
             dbHelper.insertMessage(db, conversationName, sender, platform, tickerText)
         } finally {

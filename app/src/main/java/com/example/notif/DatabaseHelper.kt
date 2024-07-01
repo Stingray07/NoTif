@@ -72,6 +72,34 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         println("INSERT CONVERSATION SUCCESSFUL")
     }
 
+    fun returnUserID(db: SQLiteDatabase, username: String): Int? {
+        val SQL_SELECT_QUERY = "SELECT id FROM user WHERE username = ?".trimIndent()
+
+        val cursor = db.rawQuery(SQL_SELECT_QUERY, arrayOf(username))
+        return if (cursor.moveToFirst()) {
+            val userID = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.User.COLUMN_NAME_ID))
+            cursor.close()
+            userID
+        } else {
+            cursor.close()
+            null
+        }
+    }
+
+    fun returnConversationID(db: SQLiteDatabase, conversationName: String): Int? {
+        val SQL_SELECT_QUERY = "SELECT id FROM conversation where conversationName = ?".trimIndent()
+
+        val cursor = db.rawQuery(SQL_SELECT_QUERY, arrayOf(conversationName))
+        return if (cursor.moveToFirst()) {
+            val conversationID = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_ID))
+            cursor.close()
+            conversationID
+        } else {
+            cursor.close()
+            null
+        }
+    }
+
     fun insertMessage(db: SQLiteDatabase, content: String, sender: Int, conversation: Int) {
         val SQL_INSERT_QUERY = "INSERT INTO message (content, sender, conversation, datetime) VALUES (?, ?, ?, ?)".trimIndent()
 
