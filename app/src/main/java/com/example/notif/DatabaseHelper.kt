@@ -62,11 +62,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun insertConversation(db: SQLiteDatabase, conversationName: String, platform: String) {
-        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, platform) VALUES (?, ?, ?)".trimIndent()
+        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, platform) VALUES (?, ?)".trimIndent()
 
         val stmt = db.compileStatement(SQL_INSERT_QUERY)
         stmt.bindString(1, conversationName)
-        stmt.bindString(3, platform)
+        stmt.bindString(2, platform)
         stmt.executeInsert()
 
         println("INSERT CONVERSATION SUCCESSFUL")
@@ -140,6 +140,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
         cursor.close()
         return messages
+    }
+
+    fun resetTables(db: SQLiteDatabase) {
+        deleteAllRowsFromTables(db)
+        onCreate(db)
+    }
+
+    private fun deleteAllRowsFromTables(db:SQLiteDatabase) {
+        db.execSQL(SQL_DELETE_MESSAGES)
+        db.execSQL(SQL_DELETE_CONVERSATIONS)
+        db.execSQL(SQL_DELETE_USERS)
     }
 
     override fun onCreate(db: SQLiteDatabase) {

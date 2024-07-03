@@ -1,6 +1,7 @@
 package com.example.notif
 
 import android.app.Notification
+import android.database.sqlite.SQLiteDatabase
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -9,16 +10,23 @@ import android.util.Log
 class MyNotificationListenerService : NotificationListenerService() {
 
     private lateinit var dbHelper: DatabaseHelper
+    private lateinit var db: SQLiteDatabase
 
     override fun onCreate() {
         super.onCreate()
         dbHelper = DatabaseHelper(this)
+        db = dbHelper.writableDatabase
+        dbHelper.resetTables(db)
+        insertValues(dbHelper, db)
+
+        println("CONVERSATION ALREADY IN DB = " + dbHelper.returnConversationID(db, "TEST CONVOS"))
+        println("USER ALREADY IN DB = " + dbHelper.returnUserID(db, "TESTS"))
+
+        println(dbHelper.getAllMessages(db))
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
-
-        val db = dbHelper.writableDatabase
 
         try {
             val notification = sbn.notification
@@ -42,9 +50,7 @@ class MyNotificationListenerService : NotificationListenerService() {
             Log.d("NotificationListener", "Message Sender: $sender")
             Log.d("NotificationListener", "Notification TickerText: $tickerText")
 
-//            try testing returnUserID and returnConversationID functions
-
-            dbHelper.insertMessage(db, conversationName, sender, platform, tickerText)
+//            dbHelper.insertMessage(db, conversationName, sender, platform, tickerText)
         } finally {
             db.close()
         }
@@ -99,5 +105,11 @@ class MyNotificationListenerService : NotificationListenerService() {
                 null
             }
         }
+    }
+
+    private fun insertValues(dbHelper: DatabaseHelper, db: SQLiteDatabase) {
+        dbHelper.insertUser(db, "TEST")
+        dbHelper.insertConversation(db, "TEST CONVO", "PLATFORM")
+        dbHelper.insertMessage(db, "CONTENT", 0, 0)
     }
 }
