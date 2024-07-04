@@ -19,8 +19,6 @@ class MyNotificationListenerService : NotificationListenerService() {
         dbHelper.resetTables(db)
         insertValues(dbHelper, db)
 
-        println("CONVERSATION ALREADY IN DB = " + dbHelper.returnConversationID(db, "TEST CONVOS"))
-        println("USER ALREADY IN DB = " + dbHelper.returnUserID(db, "TESTS"))
 
         println(dbHelper.getAllMessages(db))
     }
@@ -34,23 +32,19 @@ class MyNotificationListenerService : NotificationListenerService() {
             val conversationName = extras.getString(Notification.EXTRA_TITLE)
             val tickerText = sbn.notification.tickerText?.toString()
             val packageName = sbn.packageName
-            val message: String
 
             if (conversationName == null || tickerText == null) {
                 return
             }
 
             val (sender, platform) = getSenderAndPlatform(packageName, conversationName, tickerText) ?: return
-
-            if (platform == "MESSENGER") {
-                message = getMessageMessenger(tickerText, sender)
-            }
+            val message = getMessage(sender, platform, tickerText) ?: return
 
             Log.d("NotificationListener", "Conversation Name: $conversationName")
             Log.d("NotificationListener", "Message Sender: $sender")
             Log.d("NotificationListener", "Notification TickerText: $tickerText")
 
-//            dbHelper.insertMessage(db, conversationName, sender, platform, tickerText)
+
         } finally {
             db.close()
         }
@@ -102,6 +96,22 @@ class MyNotificationListenerService : NotificationListenerService() {
             }
             else -> {
                 Log.d("NotificationListener", "Package Not Found")
+                null
+            }
+        }
+    }
+
+    private fun getMessage(sender: String, platform: String, tickerText: String): String? {
+        return when (platform) {
+            "MESSENGER" -> {
+                getMessageMessenger(tickerText, sender)
+            }
+
+            "INSTAGRAM" -> {
+                tickerText
+            }
+            else -> {
+                Log.d("NotificationListener", "Message Not Found")
                 null
             }
         }
