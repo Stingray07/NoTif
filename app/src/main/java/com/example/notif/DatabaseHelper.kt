@@ -100,7 +100,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
-    fun insertMessage(db: SQLiteDatabase, content: String, sender: Int, conversation: Int) {
+    fun insertMessage(db: SQLiteDatabase, content: String, sender: Int?, conversation: Int?) {
+        if (sender == null || conversation == null) {
+            return
+        }
+
         val SQL_INSERT_QUERY = "INSERT INTO message (content, sender, conversation, datetime) VALUES (?, ?, ?, ?)".trimIndent()
 
         val stmt = db.compileStatement(SQL_INSERT_QUERY)

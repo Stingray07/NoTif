@@ -19,7 +19,6 @@ class MyNotificationListenerService : NotificationListenerService() {
         dbHelper.resetTables(db)
         insertValues(dbHelper, db)
 
-
         println(dbHelper.getAllMessages(db))
     }
 
@@ -39,6 +38,11 @@ class MyNotificationListenerService : NotificationListenerService() {
 
             val (sender, platform) = getSenderAndPlatform(packageName, conversationName, tickerText) ?: return
             val message = getMessage(sender, platform, tickerText) ?: return
+
+            val conversationID = dbHelper.returnConversationID(db, conversationName)
+            val userID = dbHelper.returnUserID(db, sender)
+
+            dbHelper.insertMessage(db, message, conversationID, userID)
 
             Log.d("NotificationListener", "Conversation Name: $conversationName")
             Log.d("NotificationListener", "Message Sender: $sender")
@@ -119,7 +123,10 @@ class MyNotificationListenerService : NotificationListenerService() {
 
     private fun insertValues(dbHelper: DatabaseHelper, db: SQLiteDatabase) {
         dbHelper.insertUser(db, "TEST")
+        dbHelper.insertUser(db, "2nd User")
         dbHelper.insertConversation(db, "TEST CONVO", "PLATFORM")
+        dbHelper.insertConversation(db, "2nd Conversation", "MESSENGER")
+        dbHelper.insertMessage(db, "2nd CONTENT", 2, 2)
         dbHelper.insertMessage(db, "CONTENT", 0, 0)
     }
 }
