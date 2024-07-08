@@ -101,6 +101,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun insertMessage(db: SQLiteDatabase, content: String, sender: Int?, conversation: Int?) {
+        println("insertMessage function reached")
+
         if (sender == null || conversation == null) {
             return
         }

@@ -17,41 +17,51 @@ class MyNotificationListenerService : NotificationListenerService() {
         dbHelper = DatabaseHelper(this)
         db = dbHelper.writableDatabase
         dbHelper.resetTables(db)
-        insertValues(dbHelper, db)
 
         println(dbHelper.getAllMessages(db))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.close()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         super.onNotificationPosted(sbn)
 
-        try {
-            val notification = sbn.notification
-            val extras = notification.extras
-            val conversationName = extras.getString(Notification.EXTRA_TITLE)
-            val tickerText = sbn.notification.tickerText?.toString()
-            val packageName = sbn.packageName
+        val notification = sbn.notification
+        val extras = notification.extras
+        val conversationName = extras.getString(Notification.EXTRA_TITLE)
+        val tickerText = sbn.notification.tickerText?.toString()
+        val packageName = sbn.packageName
 
-            if (conversationName == null || tickerText == null) {
-                return
-            }
-
-            val (sender, platform) = getSenderAndPlatform(packageName, conversationName, tickerText) ?: return
-            val message = getMessage(sender, platform, tickerText) ?: return
-
-            val conversationID = dbHelper.returnConversationID(db, conversationName)
-            val userID = dbHelper.returnUserID(db, sender)
-
-            dbHelper.insertMessage(db, message, conversationID, userID)
-
-            Log.d("NotificationListener", "Conversation Name: $conversationName")
-            Log.d("NotificationListener", "Message Sender: $sender")
-            Log.d("NotificationListener", "Notification TickerText: $tickerText")
-
-
-        } finally {
-            db.close()
+        if (conversationName == null || tickerText == null) {
+            return
         }
+
+        val (sender, platform) = getSenderAndPlatform(packageName, conversationName, tickerText) ?: return
+
+//        Log.d("NotificationListener", "Conversation Name: $conversationName")
+//        Log.d("NotificationListener", "Message Sender: $sender")
+//        Log.d("NotificationListener", "Notification TickerText: $tickerText")
+
+        val message = getMessage(sender, platform, tickerText) ?: return
+
+        var conversationID = dbHelper.returnConversationID(db, conversationName)
+        if (conversationID == null) {
+            dbHelper.insertConversation(db, conversationName, platform)
+            conversationID = dbHelper.returnConversationID(db, conversationName)
+        }
+
+        var userID = dbHelper.returnUserID(db, sender)
+        if (userID == null) {
+            dbHelper.insertUser(db, sender)
+            userID = dbHelper.returnUserID(db, sender)
+        }
+
+        dbHelper.insertMessage(db, message, conversationID, userID)
+
+        println(dbHelper.getAllMessages(db))
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
