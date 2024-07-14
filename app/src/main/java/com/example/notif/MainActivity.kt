@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
         } else {
             Toast.makeText(this, "Notification Access Granted", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     override fun onDestroy() {

@@ -148,6 +148,29 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return messages
     }
 
+    fun getAllConversations(db: SQLiteDatabase): List<String> {
+        val conversations = mutableListOf<String>()
+        val cursor: Cursor = db.query(
+            DatabaseContract.Conversation.TABLE_NAME,  // The table to query
+            null,                                 // The columns to return (null means all columns)
+            null,                                 // The columns for the WHERE clause
+            null,                                 // The values for the WHERE clause
+            null,                                 // Group the rows
+            null,                                 // Filter by row groups
+            null                                  // The sort order
+        )
+
+        with(cursor) {
+            while (moveToNext()) {
+                val conversationName = getString(getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_CONVERSATION_NAME))
+                conversations.add(conversationName)
+            }
+        }
+
+        cursor.close()
+        return conversations
+    }
+
     fun resetTables(db: SQLiteDatabase) {
         deleteAllRowsFromTables(db)
         onCreate(db)
