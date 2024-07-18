@@ -18,11 +18,10 @@ class MyNotificationListenerService : NotificationListenerService() {
         // initialize dbHelper and db
 
         dbHelper = DatabaseHelper(this)
-        db = dbHelper.writableDatabase
-        dbHelper.resetTables(db)
-        insertValues(dbHelper, db)
+        dbHelper.resetTables()
+        insertValues(dbHelper)
 
-        println(dbHelper.getAllConversations(db))
+        println(dbHelper.getAllConversations())
     }
 
     override fun onDestroy() {
@@ -53,22 +52,22 @@ class MyNotificationListenerService : NotificationListenerService() {
         val message = getMessage(sender, platform, tickerText) ?: return
 
         // get conversationID if not in DB else add to DB and get
-        var conversationID = dbHelper.returnConversationID(db, conversationName)
+        var conversationID = dbHelper.returnConversationID(conversationName)
         if (conversationID == null) {
-            dbHelper.insertConversation(db, conversationName, platform)
-            conversationID = dbHelper.returnConversationID(db, conversationName)
+            dbHelper.insertConversation(conversationName, platform)
+            conversationID = dbHelper.returnConversationID(conversationName)
         }
 
         // get userID if not in DB else add to DB and get
-        var userID = dbHelper.returnUserID(db, sender)
+        var userID = dbHelper.returnUserID(sender)
         if (userID == null) {
-            dbHelper.insertUser(db, sender)
-            userID = dbHelper.returnUserID(db, sender)
+            dbHelper.insertUser(sender)
+            userID = dbHelper.returnUserID(sender)
         }
 
-        dbHelper.insertMessage(db, message, conversationID, userID)
+        dbHelper.insertMessage(message, conversationID, userID)
 
-        println(dbHelper.getAllMessages(db))
+        println(dbHelper.getAllMessages())
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
@@ -96,7 +95,7 @@ class MyNotificationListenerService : NotificationListenerService() {
 
     private fun getSenderInstagram(conversationName: String): String {
 
-        // conversationName looks like this: username: sender
+        // conversationName looks like this: MyUsername: sender
         // get string values after ':' then return
 
         val sender = StringBuilder("")
@@ -146,12 +145,12 @@ class MyNotificationListenerService : NotificationListenerService() {
         }
     }
 
-    private fun insertValues(dbHelper: DatabaseHelper, db: SQLiteDatabase) {
-        dbHelper.insertUser(db, "TEST")
-        dbHelper.insertUser(db, "2nd User")
-        dbHelper.insertConversation(db, "TEST CONVO", "PLATFORM")
-        dbHelper.insertConversation(db, "2nd Conversation", "MESSENGER")
-        dbHelper.insertMessage(db, "2nd CONTENT", 2, 2)
-        dbHelper.insertMessage(db, "CONTENT", 0, 0)
+    private fun insertValues(dbHelper: DatabaseHelper) {
+        dbHelper.insertUser("TEST")
+        dbHelper.insertUser("2nd User")
+        dbHelper.insertConversation("TEST CONVO", "PLATFORM")
+        dbHelper.insertConversation("2nd Conversation", "MESSENGER")
+        dbHelper.insertMessage("2nd CONTENT", 2, 2)
+        dbHelper.insertMessage("CONTENT", 0, 0)
     }
 }

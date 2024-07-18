@@ -11,6 +11,8 @@ import java.util.Locale
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
+    private val db: SQLiteDatabase = this.writableDatabase
+
     // initialize db
     companion object {
         const val DATABASE_VERSION = 1
@@ -52,7 +54,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val SQL_DELETE_USERS = "DROP TABLE IF EXISTS ${DatabaseContract.User.TABLE_NAME}"
     }
 
-    fun insertUser(db: SQLiteDatabase, username: String) {
+    fun insertUser(username: String) {
         val SQL_INSERT_QUERY = "INSERT INTO user (username) VALUES (?)".trimIndent()
 
         val stmt = db.compileStatement(SQL_INSERT_QUERY)
@@ -62,7 +64,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         println("INSERT USER SUCCESSFUL")
     }
 
-    fun insertConversation(db: SQLiteDatabase, conversationName: String, platform: String) {
+    fun insertConversation(conversationName: String, platform: String) {
         val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, platform) VALUES (?, ?)".trimIndent()
 
         val stmt = db.compileStatement(SQL_INSERT_QUERY)
@@ -73,7 +75,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         println("INSERT CONVERSATION SUCCESSFUL")
     }
 
-    fun returnUserID(db: SQLiteDatabase, username: String): Int? {
+    fun returnUserID(username: String): Int? {
         val SQL_SELECT_QUERY = "SELECT id FROM user WHERE username = ?".trimIndent()
 
         val cursor = db.rawQuery(SQL_SELECT_QUERY, arrayOf(username))
@@ -87,7 +89,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
-    fun returnConversationID(db: SQLiteDatabase, conversationName: String): Int? {
+    fun returnConversationID(conversationName: String): Int? {
         val SQL_SELECT_QUERY = "SELECT id FROM conversation where conversationName = ?".trimIndent()
 
         val cursor = db.rawQuery(SQL_SELECT_QUERY, arrayOf(conversationName))
@@ -101,9 +103,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
-    fun insertMessage(db: SQLiteDatabase, content: String, sender: Int?, conversation: Int?) {
-        println("insertMessage function reached")
-
+    fun insertMessage(content: String, sender: Int?, conversation: Int?) {
         if (sender == null || conversation == null) {
             return
         }
@@ -123,7 +123,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         println("INSERT MESSAGE SUCCESSFUL")
     }
 
-    fun getAllMessages(db: SQLiteDatabase): List<Message> {
+    fun getAllMessages(): List<Message> {
         val messages = mutableListOf<Message>()
         val cursor: Cursor = db.query(
             DatabaseContract.Message.TABLE_NAME,  // The table to query
@@ -149,7 +149,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return messages
     }
 
-    fun getAllConversations(db: SQLiteDatabase): List<String> {
+    fun getAllConversations(): List<String> {
         val conversations = mutableListOf<String>()
         val cursor: Cursor = db.query(
             DatabaseContract.Conversation.TABLE_NAME,  // The table to query
@@ -172,12 +172,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return conversations
     }
 
-    fun resetTables(db: SQLiteDatabase) {
-        deleteAllRowsFromTables(db)
+    fun resetTables() {
+        deleteAllRowsFromTables()
         onCreate(db)
     }
 
-    private fun deleteAllRowsFromTables(db:SQLiteDatabase) {
+    private fun deleteAllRowsFromTables() {
         db.execSQL(SQL_DELETE_MESSAGES)
         db.execSQL(SQL_DELETE_CONVERSATIONS)
         db.execSQL(SQL_DELETE_USERS)

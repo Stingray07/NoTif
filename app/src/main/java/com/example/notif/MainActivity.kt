@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,12 +39,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dbHelper = DatabaseHelper(this)
+        val conversations = dbHelper.getAllConversations()
+
         setContent {
             NoTifTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     Greeting("Android")
-                    ShowButton()
+                    ShowConversationList(conversationList = conversations)
                 }
             }
         }
@@ -81,13 +85,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-
-
-// ADD PARAMETERS HERE LATER
-@Preview
 @Composable
-fun ConversationCard() {
-    Row(modifier = Modifier.padding(all = 1.dp)) {
+fun ShowConversationCard(string: String) {
+    Row(modifier = Modifier
+        .padding(all = 1.dp)
+        .fillMaxWidth()) {
         Image(
             painter = painterResource(R.drawable.ic_launcher_foreground),
             contentDescription = "Contact profile picture",
@@ -98,7 +100,17 @@ fun ConversationCard() {
 
         Column {
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Username")
+            Text(text = string)
+        }
+    }
+}
+
+@Composable
+fun ShowConversationList(conversationList: List<String>) {
+    println("HEHEHE")
+    Column {
+        for (item in conversationList){
+            ShowConversationCard(string = item)
         }
     }
 }
