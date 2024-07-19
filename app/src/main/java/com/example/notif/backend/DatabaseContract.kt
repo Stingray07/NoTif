@@ -1,4 +1,4 @@
-package com.example.notif
+package com.example.notif.backend
 import android.provider.BaseColumns
 
 object DatabaseContract {
@@ -31,10 +31,4 @@ data class Message(
     val platform: Int,
     val conversation: Int,
     val datetime: String
-)
-
-data class Conversation(
-    val id: Int,
-    val conversationName: String,
-    val platform: String,
 )

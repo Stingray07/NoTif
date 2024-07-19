@@ -1,4 +1,4 @@
-package com.example.notif
+package com.example.notif.backend
 
 import android.app.Notification
 import android.database.sqlite.SQLiteDatabase
