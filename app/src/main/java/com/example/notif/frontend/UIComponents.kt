@@ -4,11 +4,15 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.*
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 
 import com.example.notif.ui.theme.NoTifTheme
 import com.example.notif.R
@@ -25,23 +31,16 @@ import com.example.notif.R
 
 object UIComponents {
     @Composable
-    fun Greeting(name: String, modifier: Modifier = Modifier) {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier
-        )
-    }
-
-    @Composable
-    fun ShowConversationCard(string: String) {
+    fun ShowConversationCard(string: String, onclick: () -> Unit) {
         Row(modifier = Modifier
-            .padding(all = 1.dp)
-            .fillMaxWidth()) {
+            .clickable { onclick() }
+            .fillMaxWidth()
+            .height(60.dp)) {
             Image(
                 painter = painterResource(R.drawable.ic_launcher_foreground),
                 contentDescription = "Contact profile picture",
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(110.dp)
                     .clip(CircleShape)
             )
 
@@ -52,37 +51,27 @@ object UIComponents {
         }
     }
 
+    private fun print() {
+        println("Clicked")
+    }
+
     @Composable
     fun ShowConversationList(conversationList: List<String>) {
-        Column {
-            for (item in conversationList){
-                ShowConversationCard(string = item)
+        LazyColumn{
+            items(conversationList) { message ->
+                ShowConversationCard(string = message) { print() }
             }
         }
     }
 
     @Composable
-    fun ShowButton() {
-        // Obtain the context
-        val context = LocalContext.current
-
-        // Button composable
-        Button(
-            onClick = {
-                // Show a Toast message on button click
-                Toast.makeText(context, "Button Clicked!", Toast.LENGTH_SHORT).show()
-            },
-            modifier = Modifier.padding(1.dp)
-        ) {
-            Text(text = "Click Me")
-        }
-    }
-
-    @Composable
-    fun GreetingPreview() {
-        NoTifTheme {
-            Greeting("Android")
-        }
+    fun ShowChatText() {
+        Text(
+            text = "Chats",
+            fontSize = 30.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -91,5 +80,8 @@ object UIComponents {
 fun ChatText() {
     Text(
         text = "Chats",
+        fontSize = 50.sp,
+        modifier = Modifier
+            .fillMaxWidth()
     )
 }

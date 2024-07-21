@@ -7,9 +7,14 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.*
+import androidx.compose.ui.unit.dp
 
 import com.example.notif.ui.theme.NoTifTheme
 import com.example.notif.backend.DatabaseHelper
@@ -26,10 +31,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             NoTifTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    UIComponents.Greeting("Android")
-                    UIComponents.ShowConversationList(conversationList = conversations)
+                    Column {
+                        UIComponents.ShowChatText()
+                        Spacer(modifier = Modifier.height(10.dp))
+                        UIComponents.ShowConversationList(conversationList = conversations)
+                    }
                 }
             }
         }
