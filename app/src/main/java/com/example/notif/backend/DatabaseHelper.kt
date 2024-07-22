@@ -123,13 +123,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         println("INSERT MESSAGE SUCCESSFUL")
     }
 
-    fun getAllMessages(): List<Message> {
+
+    fun getMessagesByConversation(conversationId: Int): List<Message> {
         val messages = mutableListOf<Message>()
+        val selection = "${DatabaseContract.Message.COLUMN_NAME_CONVERSATION} = ?"
+        val selectionArgs = arrayOf(conversationId.toString())
+
         val cursor: Cursor = db.query(
             DatabaseContract.Message.TABLE_NAME,  // The table to query
             null,                                 // The columns to return (null means all columns)
-            null,                                 // The columns for the WHERE clause
-            null,                                 // The values for the WHERE clause
+            selection,                            // The columns for the WHERE clause
+            selectionArgs,                        // The values for the WHERE clause
             null,                                 // Group the rows
             null,                                 // Filter by row groups
             null                                  // The sort order
@@ -149,8 +153,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return messages
     }
 
-    fun getAllConversations(): List<String> {
-        val conversations = mutableListOf<String>()
+    fun getAllConversations(): List<Conversation> {
+        val conversations = mutableListOf<Conversation>()
         val cursor: Cursor = db.query(
             DatabaseContract.Conversation.TABLE_NAME,  // The table to query
             null,                                 // The columns to return (null means all columns)
@@ -163,8 +167,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
         with(cursor) {
             while (moveToNext()) {
+                val id = getInt(getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_ID))
                 val conversationName = getString(getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_CONVERSATION_NAME))
-                conversations.add(conversationName)
+                conversations.add(Conversation(id, conversationName))
             }
         }
 

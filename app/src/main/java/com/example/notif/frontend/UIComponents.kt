@@ -16,17 +16,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.*
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
-import com.example.notif.ui.theme.NoTifTheme
 import com.example.notif.R
+import com.example.notif.backend.Conversation
 
 
 object UIComponents {
@@ -51,15 +49,16 @@ object UIComponents {
         }
     }
 
-    private fun print() {
-        println("Clicked")
+    private fun print(conversationID : Int) {
+        println("$conversationID")
     }
 
     @Composable
-    fun ShowConversationList(conversationList: List<String>) {
+    fun ShowConversationList(conversationList: List<Conversation>) {
         LazyColumn{
-            items(conversationList) { message ->
-                ShowConversationCard(string = message) { print() }
+            items(conversationList) { conversation ->
+                ShowConversationCard(string = conversation.conversationName
+                ) { print(conversation.id) }
             }
         }
     }

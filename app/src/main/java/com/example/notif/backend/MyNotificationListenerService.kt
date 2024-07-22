@@ -67,7 +67,6 @@ class MyNotificationListenerService : NotificationListenerService() {
 
         dbHelper.insertMessage(message, conversationID, userID)
 
-        println(dbHelper.getAllMessages())
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {

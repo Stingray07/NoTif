@@ -32,3 +32,8 @@ data class Message(
     val conversation: Int,
     val datetime: String
 )
+
+data class Conversation(
+    val id: Int,
+    val conversationName: String
+)
