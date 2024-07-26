@@ -30,15 +30,7 @@ class MainActivity : ComponentActivity() {
         val conversationList = dbHelper.getAllConversations()
 
         setContent {
-            NoTifTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Column {
-                        UIComponents.ShowChatText()
-                        Spacer(modifier = Modifier.height(10.dp))
-                        UIComponents.ShowConversationList(conversationList = conversationList)
-                    }
-                }
-            }
+            UIComponents.Navigation(conversationList = conversationList)
         }
 
         if (!isNotificationServiceEnabled(this)) {

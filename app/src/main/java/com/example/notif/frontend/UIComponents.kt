@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -22,12 +23,43 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.NavHost
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 import com.example.notif.R
 import com.example.notif.backend.Conversation
+import com.example.notif.ui.theme.NoTifTheme
 
 
 object UIComponents {
+    @Composable
+    fun Navigation(conversationList: List<Conversation>){
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = Screen.MainScreen.route, builder = {
+            composable(route = Screen.MainScreen.route){
+                MainScreen(conversationList = conversationList)
+            }
+        })
+    }
+
+    @Composable
+    fun MainScreen(conversationList: List<Conversation>) {
+        NoTifTheme {
+            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                Column {
+                    ShowChatText()
+                    Spacer(modifier = Modifier.height(10.dp))
+                    ShowConversationList(conversationList = conversationList)
+                }
+            }
+        }
+    }
+
+
     @Composable
     fun ShowConversationCard(string: String, onclick: () -> Unit) {
         Row(modifier = Modifier
@@ -72,15 +104,4 @@ object UIComponents {
                 .fillMaxWidth()
         )
     }
-}
-
-@Preview
-@Composable
-fun ChatText() {
-    Text(
-        text = "Chats",
-        fontSize = 50.sp,
-        modifier = Modifier
-            .fillMaxWidth()
-    )
 }
