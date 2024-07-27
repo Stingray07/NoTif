@@ -26,9 +26,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 import com.example.notif.R
 import com.example.notif.backend.Conversation
@@ -43,11 +46,21 @@ object UIComponents {
             composable(route = Screen.MainScreen.route){
                 MainScreen(conversationList = conversationList)
             }
+
+            composable(
+                route = Screen.ChatScreen.route + "/{id}",
+                arguments = listOf(
+                    navArgument("id") { type = NavType.StringType }
+                )
+            ){ entry ->
+                val id = entry.arguments?.getString("id")
+                ChatScreen(id)
+            }
         })
     }
 
     @Composable
-    fun MainScreen(conversationList: List<Conversation>) {
+    fun MainScreen(conversationList: List<Conversation>, navController: NavController) {
         NoTifTheme {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Column {
@@ -59,11 +72,21 @@ object UIComponents {
         }
     }
 
+    @Composable
+    fun ChatScreen(conversationID: String?){
+        Text(
+            text = "Chat Screen $conversationID",
+            fontSize = 30.sp,
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+    }
+
 
     @Composable
-    fun ShowConversationCard(string: String, onclick: () -> Unit) {
+    fun ShowConversationCard(conversationName: String, navController: NavController) {
         Row(modifier = Modifier
-            .clickable { onclick() }
+            .clickable { navController.navigate(Screen.ChatScreen.withArgs()) }
             .fillMaxWidth()
             .height(60.dp)) {
             Image(
@@ -76,21 +99,16 @@ object UIComponents {
 
             Column {
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = string)
+                Text(text = conversationName)
             }
         }
-    }
-
-    private fun print(conversationID : Int) {
-        println("$conversationID")
     }
 
     @Composable
     fun ShowConversationList(conversationList: List<Conversation>) {
         LazyColumn{
             items(conversationList) { conversation ->
-                ShowConversationCard(string = conversation.conversationName
-                ) { print(conversation.id) }
+                ShowConversationCard(conversationName = conversation.conversationName)
             }
         }
     }
