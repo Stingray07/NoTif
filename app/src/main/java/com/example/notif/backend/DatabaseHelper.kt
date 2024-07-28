@@ -167,7 +167,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
         with(cursor) {
             while (moveToNext()) {
-                val id = getInt(getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_ID))
+                val id = getString(getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_ID))
                 val conversationName = getString(getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_CONVERSATION_NAME))
                 conversations.add(Conversation(id, conversationName))
             }

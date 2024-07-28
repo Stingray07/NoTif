@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
         dbHelper = DatabaseHelper(this)
         val conversationList = dbHelper.getAllConversations()
 
-
         setContent {
             UIComponents.Navigation(conversationList = conversationList)
         }

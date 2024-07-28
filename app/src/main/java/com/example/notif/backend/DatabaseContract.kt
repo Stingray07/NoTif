@@ -34,6 +34,6 @@ data class Message(
 )
 
 data class Conversation(
-    val id: Int,
+    val id: String,
     val conversationName: String
 )
