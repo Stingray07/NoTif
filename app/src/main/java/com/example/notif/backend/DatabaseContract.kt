@@ -28,7 +28,7 @@ object DatabaseContract {
 data class Message(
     val id: Int,
     val content: String,
-    val platform: Int,
+    val sender: Int, // Change this later to string
     val conversation: Int,
     val datetime: String
 )

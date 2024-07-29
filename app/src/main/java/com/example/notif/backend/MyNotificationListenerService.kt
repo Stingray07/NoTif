@@ -20,8 +20,6 @@ class MyNotificationListenerService : NotificationListenerService() {
         dbHelper = DatabaseHelper(this)
         dbHelper.resetTables()
         insertValues(dbHelper)
-
-        println(dbHelper.getAllConversations())
     }
 
     override fun onDestroy() {
@@ -150,6 +148,8 @@ class MyNotificationListenerService : NotificationListenerService() {
         dbHelper.insertConversation("TEST CONVO", "PLATFORM")
         dbHelper.insertConversation("2nd Conversation", "MESSENGER")
         dbHelper.insertMessage("2nd CONTENT", 2, 2)
-        dbHelper.insertMessage("CONTENT", 0, 0)
+        dbHelper.insertMessage("3rd CONTENT", 2, 2)
+        dbHelper.insertMessage("4th CONTENT", 2, 2)
+        dbHelper.insertMessage("CONTENT", 1, 1)
     }
 }

@@ -3,13 +3,15 @@ package com.example.notif.frontend
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -19,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.*
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.Surface
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -29,12 +33,14 @@ import androidx.navigation.navArgument
 
 import com.example.notif.R
 import com.example.notif.backend.Conversation
-import com.example.notif.ui.theme.NoTifTheme
+import com.example.notif.backend.Message
+import com.example.notif.backend.DatabaseHelper
 
 
 object UIComponents {
     @Composable
-    fun Navigation(conversationList: List<Conversation>){
+    fun Navigation(dbHelper: DatabaseHelper){
+        val conversationList = dbHelper.getAllConversations()
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = Screen.MainScreen.route, builder = {
             composable(route = Screen.MainScreen.route){
@@ -48,32 +54,26 @@ object UIComponents {
                 )
             ){ entry ->
                 val id = entry.arguments?.getString("id")
-                ChatScreen(id)
+                if (id != null) {
+                    ChatScreen(id, dbHelper)
+                }
             }
         })
     }
 
     @Composable
     fun MainScreen(conversationList: List<Conversation>, navController: NavController) {
-        ScreenWrapper {
             Column {
                 ShowChatText()
                 Spacer(modifier = Modifier.height(10.dp))
                 ShowConversationList(conversationList = conversationList, navController)
             }
-        }
     }
 
     @Composable
-    fun ChatScreen(conversationID: String?){
-        ScreenWrapper {
-            Text(
-                text = "Chat Screen $conversationID",
-                fontSize = 30.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
+    fun ChatScreen(conversationID: String, dbHelper: DatabaseHelper){
+        val messageList = dbHelper.getMessagesByConversation(conversationID)
+        ShowConversation(messageList = messageList)
     }
 
     @Composable
@@ -99,6 +99,49 @@ object UIComponents {
     }
 
     @Composable
+    fun ShowMessageCard(message: Message) {
+        Row(modifier = Modifier.padding(all = 8.dp)) {
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column {
+                Text(
+                    text = message.sender.toString(),
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp) {
+                    Text(
+                        text = message.content,
+                        modifier = Modifier.padding(all = 4.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun ShowConversation(messageList: List<Message>) {
+        LazyColumn{
+            items(messageList) {message ->
+                ShowMessageCard(message)
+            }
+        }
+    }
+
+
+    @Composable
     fun ShowConversationList(conversationList: List<Conversation>, navController: NavController) {
         LazyColumn{
             items(conversationList) { conversation ->
@@ -115,14 +158,5 @@ object UIComponents {
             modifier = Modifier
                 .fillMaxWidth()
         )
-    }
-
-    @Composable
-    fun ScreenWrapper(content: @Composable () -> Unit) {
-        NoTifTheme {
-            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                content()
-            }
-        }
     }
 }

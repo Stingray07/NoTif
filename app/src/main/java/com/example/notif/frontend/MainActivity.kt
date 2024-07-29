@@ -7,13 +7,10 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.*
-import androidx.compose.ui.unit.dp
 
 import com.example.notif.ui.theme.NoTifTheme
 import com.example.notif.backend.DatabaseHelper
@@ -27,10 +24,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         dbHelper = DatabaseHelper(this)
-        val conversationList = dbHelper.getAllConversations()
+        dbHelper.insertMessage("YYYYY", 2, 2)
+        println(dbHelper.getMessagesByConversation("2"))
 
         setContent {
-            UIComponents.Navigation(conversationList = conversationList)
+            NoTifTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background) {
+                    UIComponents.Navigation(dbHelper)
+                }
+            }
         }
 
         if (!isNotificationServiceEnabled(this)) {

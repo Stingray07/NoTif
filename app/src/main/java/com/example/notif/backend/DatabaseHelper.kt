@@ -124,10 +124,10 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
 
-    fun getMessagesByConversation(conversationId: Int): List<Message> {
+    fun getMessagesByConversation(conversationId: String): List<Message> {
         val messages = mutableListOf<Message>()
         val selection = "${DatabaseContract.Message.COLUMN_NAME_CONVERSATION} = ?"
-        val selectionArgs = arrayOf(conversationId.toString())
+        val selectionArgs = arrayOf(conversationId)
 
         val cursor: Cursor = db.query(
             DatabaseContract.Message.TABLE_NAME,  // The table to query
