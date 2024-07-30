@@ -55,9 +55,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun insertUser(username: String) {
-        val SQL_INSERT_QUERY = "INSERT INTO user (username) VALUES (?)".trimIndent()
+        val sqlInsertQuery = "INSERT INTO user (username) VALUES (?)".trimIndent()
 
-        val stmt = db.compileStatement(SQL_INSERT_QUERY)
+        val stmt = db.compileStatement(sqlInsertQuery)
         stmt.bindString(1, username)
         stmt.executeInsert()
 
@@ -65,9 +65,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun insertConversation(conversationName: String, platform: String) {
-        val SQL_INSERT_QUERY = "INSERT INTO conversation (conversationName, platform) VALUES (?, ?)".trimIndent()
+        val sqlInsertQuery = "INSERT INTO conversation (conversationName, platform) VALUES (?, ?)".trimIndent()
 
-        val stmt = db.compileStatement(SQL_INSERT_QUERY)
+        val stmt = db.compileStatement(sqlInsertQuery)
         stmt.bindString(1, conversationName)
         stmt.bindString(2, platform)
         stmt.executeInsert()
@@ -76,9 +76,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun returnUserID(username: String): Int? {
-        val SQL_SELECT_QUERY = "SELECT id FROM user WHERE username = ?".trimIndent()
+        val sqlInsertQuery = "SELECT id FROM user WHERE username = ?".trimIndent()
 
-        val cursor = db.rawQuery(SQL_SELECT_QUERY, arrayOf(username))
+        val cursor = db.rawQuery(sqlInsertQuery, arrayOf(username))
         return if (cursor.moveToFirst()) {
             val userID = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.User.COLUMN_NAME_ID))
             cursor.close()
@@ -90,9 +90,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     fun returnConversationID(conversationName: String): Int? {
-        val SQL_SELECT_QUERY = "SELECT id FROM conversation where conversationName = ?".trimIndent()
+        val sqlInsertQuery = "SELECT id FROM conversation where conversationName = ?".trimIndent()
 
-        val cursor = db.rawQuery(SQL_SELECT_QUERY, arrayOf(conversationName))
+        val cursor = db.rawQuery(sqlInsertQuery, arrayOf(conversationName))
         return if (cursor.moveToFirst()) {
             val conversationID = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_ID))
             cursor.close()
@@ -108,9 +108,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             return
         }
 
-        val SQL_INSERT_QUERY = "INSERT INTO message (content, sender, conversation, datetime) VALUES (?, ?, ?, ?)".trimIndent()
+        val sqlInsertQuery = "INSERT INTO message (content, sender, conversation, datetime) VALUES (?, ?, ?, ?)".trimIndent()
 
-        val stmt = db.compileStatement(SQL_INSERT_QUERY)
+        val stmt = db.compileStatement(sqlInsertQuery)
 
         val currentDateTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault()).format(Date())
 
@@ -143,14 +143,53 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             while (moveToNext()) {
                 val id = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_ID))
                 val content = getString(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_CONTENT))
-                val sender = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_SENDER))
-                val conversation = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_CONVERSATION))
+                val senderInt = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_SENDER))
+                val conversationInt = getInt(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_CONVERSATION))
                 val datetime = getString(getColumnIndexOrThrow(DatabaseContract.Message.COLUMN_NAME_DATE_TIME))
+
+                val sender = getUserNameById(senderInt)
+                val conversation = getConversationNameById(conversationInt)
                 messages.add(Message(id, content, sender, conversation, datetime))
             }
         }
         cursor.close()
         return messages
+    }
+
+    // Helper function to get user name by id
+    private fun getUserNameById(userId: Int): String {
+        val cursor: Cursor = db.query(
+            DatabaseContract.User.TABLE_NAME,
+            arrayOf(DatabaseContract.User.COLUMN_NAME_USERNAME),
+            "${DatabaseContract.User.COLUMN_NAME_ID} = ?",
+            arrayOf(userId.toString()),
+            null, null, null
+        )
+
+        cursor.use {
+            if (it.moveToFirst()) {
+                return it.getString(it.getColumnIndexOrThrow(DatabaseContract.User.COLUMN_NAME_USERNAME))
+            }
+        }
+        return "Unknown"
+    }
+
+    // Helper function to get conversation name by id
+    private fun getConversationNameById(conversationId: Int): String {
+        val cursor: Cursor = db.query(
+            DatabaseContract.Conversation.TABLE_NAME,
+            arrayOf(DatabaseContract.Conversation.COLUMN_NAME_CONVERSATION_NAME),
+            "${DatabaseContract.Conversation.COLUMN_NAME_ID} = ?",
+            arrayOf(conversationId.toString()),
+            null, null, null
+        )
+
+        cursor.use {
+            if (it.moveToFirst()) {
+                return it.getString(it.getColumnIndexOrThrow(DatabaseContract.Conversation.COLUMN_NAME_CONVERSATION_NAME))
+            }
+        }
+        return "Unknown"
     }
 
     fun getAllConversations(): List<Conversation> {

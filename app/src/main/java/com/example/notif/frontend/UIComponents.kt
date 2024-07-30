@@ -1,6 +1,5 @@
 package com.example.notif.frontend
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -21,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Surface
 import androidx.navigation.NavController
@@ -41,6 +39,8 @@ object UIComponents {
     @Composable
     fun Navigation(dbHelper: DatabaseHelper){
         val conversationList = dbHelper.getAllConversations()
+        println("HAHAHAHAHAHAHAHA")
+        println(conversationList)
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = Screen.MainScreen.route, builder = {
             composable(route = Screen.MainScreen.route){

@@ -6,7 +6,6 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 
-
 class MyNotificationListenerService : NotificationListenerService() {
 
     private lateinit var dbHelper: DatabaseHelper
@@ -14,9 +13,7 @@ class MyNotificationListenerService : NotificationListenerService() {
 
     override fun onCreate() {
         super.onCreate()
-
         // initialize dbHelper and db
-
         dbHelper = DatabaseHelper(this)
         dbHelper.resetTables()
         insertValues(dbHelper)

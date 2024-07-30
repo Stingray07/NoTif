@@ -23,9 +23,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (!isNotificationServiceEnabled(this)) {
+            requestNotificationPermission()
+        } else {
+            Toast.makeText(this, "Notification Access Granted", Toast.LENGTH_SHORT).show()
+        }
+
         dbHelper = DatabaseHelper(this)
-        dbHelper.insertMessage("YYYYY", 2, 2)
-        println(dbHelper.getMessagesByConversation("2"))
+        println(dbHelper.getAllConversations())
 
         setContent {
             NoTifTheme {
@@ -35,12 +41,6 @@ class MainActivity : ComponentActivity() {
                     UIComponents.Navigation(dbHelper)
                 }
             }
-        }
-
-        if (!isNotificationServiceEnabled(this)) {
-            requestNotificationPermission()
-        } else {
-            Toast.makeText(this, "Notification Access Granted", Toast.LENGTH_SHORT).show()
         }
     }
 
