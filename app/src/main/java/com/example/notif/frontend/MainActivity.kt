@@ -17,6 +17,8 @@ import com.example.notif.backend.DatabaseHelper
 import com.example.notif.backend.DatabaseContract
 
 
+//might not continue this for a while
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var dbHelper: DatabaseHelper
