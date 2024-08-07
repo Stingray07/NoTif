@@ -17,7 +17,9 @@ import com.example.notif.backend.DatabaseHelper
 import com.example.notif.backend.DatabaseContract
 
 
-//might not continue this for a while
+// actually just gonna continue this after exams HAHAH
+// not actually reviewing for it tho
+// just saying to gaslight myself
 
 class MainActivity : ComponentActivity() {
 
