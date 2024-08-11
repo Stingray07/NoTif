@@ -14,12 +14,6 @@ import androidx.compose.ui.Modifier
 
 import com.example.notif.ui.theme.NoTifTheme
 import com.example.notif.backend.DatabaseHelper
-import com.example.notif.backend.DatabaseContract
-
-
-// actually just gonna continue this after exams HAHAH
-// not actually reviewing for it tho
-// just saying to gaslight myself
 
 class MainActivity : ComponentActivity() {
 

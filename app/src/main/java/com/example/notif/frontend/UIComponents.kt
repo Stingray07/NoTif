@@ -39,7 +39,6 @@ object UIComponents {
     @Composable
     fun Navigation(dbHelper: DatabaseHelper){
         val conversationList = dbHelper.getAllConversations()
-        println("HAHAHAHAHAHAHAHA")
         println(conversationList)
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = Screen.MainScreen.route, builder = {
@@ -113,7 +112,7 @@ object UIComponents {
 
             Column {
                 Text(
-                    text = message.sender.toString(),
+                    text = message.sender,
                     color = MaterialTheme.colorScheme.secondary,
                     style = MaterialTheme.typography.titleSmall
                 )

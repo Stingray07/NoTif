@@ -30,27 +30,30 @@ class MyNotificationListenerService : NotificationListenerService() {
         // get values from notification
         val notification = sbn.notification
         val extras = notification.extras
-        val conversationName = extras.getString(Notification.EXTRA_TITLE)
+        val notificationTitle = extras.getString(Notification.EXTRA_TITLE)
         val tickerText = sbn.notification.tickerText?.toString()
         val packageName = sbn.packageName
 
-        if (conversationName == null || tickerText == null) {
+        if (notificationTitle == null || tickerText == null) {
             return
         }
 
-        val (sender, platform) = getSenderAndPlatform(packageName, conversationName, tickerText) ?: return
+        val (sender, platform) = getSenderAndPlatform(packageName, notificationTitle, tickerText) ?: return
 
-        Log.d("NotificationListener", "Conversation Name: $conversationName")
+        Log.d("NotificationListener", "Notification Title: $notificationTitle")
         Log.d("NotificationListener", "Message Sender: $sender")
         Log.d("NotificationListener", "Notification TickerText: $tickerText")
 
         val message = getMessage(sender, platform, tickerText) ?: return
 
         // get conversationID if not in DB else add to DB and get
-        var conversationID = dbHelper.returnConversationID(conversationName)
+        var conversationID = dbHelper.returnConversationID(notificationTitle)
         if (conversationID == null) {
-            dbHelper.insertConversation(conversationName, platform)
-            conversationID = dbHelper.returnConversationID(conversationName)
+            val conversationName = getConversationName(notificationTitle, platform)
+            if (conversationName != null) {
+                dbHelper.insertConversation(conversationName, platform)
+            }
+            conversationID = conversationName?.let { dbHelper.returnConversationID(it) }
         }
 
         // get userID if not in DB else add to DB and get
@@ -72,13 +75,13 @@ class MyNotificationListenerService : NotificationListenerService() {
         return tickerText.substring(sender.length + 2)
     }
 
-    private fun getSenderMessenger(tickerText: String): String {
+    private fun getValuesBeforeSemiColon(text: String): String {
 
-        // tickertext looks like this: sender: message
+        // text looks like this: sender: message
         // get string values before ':' then return
 
         val sender = StringBuilder("")
-        for (char in tickerText) {
+        for (char in text) {
             if (char == ':') {
                 break
             }
@@ -87,14 +90,14 @@ class MyNotificationListenerService : NotificationListenerService() {
         return sender.toString()
     }
 
-    private fun getSenderInstagram(conversationName: String): String {
+    private fun getValuesAfterSemiColon(text: String): String {
 
-        // conversationName looks like this: MyUsername: sender
+        // text looks like this: MyUsername: sender
         // get string values after ':' then return
 
         val sender = StringBuilder("")
         var addToSender = false
-        for (char in conversationName) {
+        for (char in text) {
             if (char == ':') {
                 addToSender = true
                 continue
@@ -107,14 +110,30 @@ class MyNotificationListenerService : NotificationListenerService() {
         return sender.toString().substring(1)
     }
 
-    private fun getSenderAndPlatform(packageName: String, conversationName: String, tickerText: String): Pair<String, String>? {
+    private fun getConversationName(notificationTitle: String, platform: String): String? {
+        return when (platform) {
+            "MESSENGER" -> {
+                getValuesBeforeSemiColon(notificationTitle)
+            }
+
+            "INSTAGRAM" -> {
+                getValuesAfterSemiColon(notificationTitle)
+            }
+            else -> {
+                Log.d("NotificationListener", "Message Not Found")
+                null
+            }
+        }
+    }
+
+    private fun getSenderAndPlatform(packageName: String, notificationTitle: String, tickerText: String): Pair<String, String>? {
         return when (packageName) {
             "com.instagram.android" -> {
-                Pair(getSenderInstagram(conversationName), "INSTAGRAM")
+                Pair(getValuesAfterSemiColon(notificationTitle), "INSTAGRAM")
             }
 
             "com.facebook.orca" -> {
-                Pair(getSenderMessenger(tickerText), "MESSENGER")
+                Pair(getValuesBeforeSemiColon(tickerText), "MESSENGER")
             }
             else -> {
                 Log.d("NotificationListener", "Package Not Found")

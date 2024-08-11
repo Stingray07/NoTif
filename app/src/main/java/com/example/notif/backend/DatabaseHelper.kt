@@ -105,6 +105,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     fun insertMessage(content: String, sender: Int?, conversation: Int?) {
         if (sender == null || conversation == null) {
+            println("sender or conversation is null")
             return
         }
 
