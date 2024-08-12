@@ -28,7 +28,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-
 import com.example.notif.R
 import com.example.notif.backend.Conversation
 import com.example.notif.backend.Message
@@ -138,7 +137,6 @@ object UIComponents {
             }
         }
     }
-
 
     @Composable
     fun ShowConversationList(conversationList: List<Conversation>, navController: NavController) {

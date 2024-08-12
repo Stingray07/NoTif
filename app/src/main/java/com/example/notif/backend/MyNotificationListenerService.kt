@@ -16,7 +16,6 @@ class MyNotificationListenerService : NotificationListenerService() {
         // initialize dbHelper and db
         dbHelper = DatabaseHelper(this)
         dbHelper.resetTables()
-        insertValues(dbHelper)
     }
 
     override fun onDestroy() {
@@ -110,62 +109,33 @@ class MyNotificationListenerService : NotificationListenerService() {
         return sender.toString().substring(1)
     }
 
-    private fun getConversationName(notificationTitle: String, platform: String): String? {
-        return when (platform) {
-            "MESSENGER" -> {
-                getValuesBeforeSemiColon(notificationTitle)
-            }
-
-            "INSTAGRAM" -> {
-                getValuesAfterSemiColon(notificationTitle)
-            }
-            else -> {
-                Log.d("NotificationListener", "Message Not Found")
-                null
-            }
-        }
-    }
-
-    private fun getSenderAndPlatform(packageName: String, notificationTitle: String, tickerText: String): Pair<String, String>? {
-        return when (packageName) {
-            "com.instagram.android" -> {
-                Pair(getValuesAfterSemiColon(notificationTitle), "INSTAGRAM")
-            }
-
-            "com.facebook.orca" -> {
-                Pair(getValuesBeforeSemiColon(tickerText), "MESSENGER")
-            }
+    private fun getSenderAndPlatform(packageName: String, notificationTitle: String, tickerText: String): Pair<String, String>? =
+        when (packageName) {
+            "com.instagram.android" -> Pair(getValuesAfterSemiColon(notificationTitle), "INSTAGRAM")
+            "com.facebook.orca" -> Pair(getValuesBeforeSemiColon(tickerText), "MESSENGER")
             else -> {
                 Log.d("NotificationListener", "Package Not Found")
                 null
             }
         }
-    }
 
-    private fun getMessage(sender: String, platform: String, tickerText: String): String? {
-        return when (platform) {
-            "MESSENGER" -> {
-                getMessageMessenger(tickerText, sender)
-            }
-
-            "INSTAGRAM" -> {
-                tickerText
-            }
+    private fun getConversationName(notificationTitle: String, platform: String): String? =
+        when (platform) {
+            "MESSENGER" -> getValuesBeforeSemiColon(notificationTitle)
+            "INSTAGRAM" -> getValuesAfterSemiColon(notificationTitle)
             else -> {
                 Log.d("NotificationListener", "Message Not Found")
                 null
             }
         }
-    }
 
-    private fun insertValues(dbHelper: DatabaseHelper) {
-        dbHelper.insertUser("TEST")
-        dbHelper.insertUser("2nd User")
-        dbHelper.insertConversation("TEST CONVO", "PLATFORM")
-        dbHelper.insertConversation("2nd Conversation", "MESSENGER")
-        dbHelper.insertMessage("2nd CONTENT", 2, 2)
-        dbHelper.insertMessage("3rd CONTENT", 2, 2)
-        dbHelper.insertMessage("4th CONTENT", 2, 2)
-        dbHelper.insertMessage("CONTENT", 1, 1)
-    }
+    private fun getMessage(sender: String, platform: String, tickerText: String): String? =
+        when (platform) {
+            "MESSENGER" -> getMessageMessenger(tickerText, sender)
+            "INSTAGRAM" -> tickerText
+            else -> {
+                Log.d("NotificationListener", "Message Not Found")
+                null
+            }
+        }
 }

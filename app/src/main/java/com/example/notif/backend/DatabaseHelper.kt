@@ -48,7 +48,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             )    
             """
 
-
         private const val SQL_DELETE_CONVERSATIONS = "DROP TABLE IF EXISTS ${DatabaseContract.Conversation.TABLE_NAME}"
         private const val SQL_DELETE_MESSAGES = "DROP TABLE IF EXISTS ${DatabaseContract.Message.TABLE_NAME}"
         private const val SQL_DELETE_USERS = "DROP TABLE IF EXISTS ${DatabaseContract.User.TABLE_NAME}"
@@ -123,7 +122,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
         println("INSERT MESSAGE SUCCESSFUL")
     }
-
 
     fun getMessagesByConversation(conversationId: String): List<Message> {
         val messages = mutableListOf<Message>()
