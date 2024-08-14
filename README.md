@@ -4,7 +4,7 @@ NoTif is an Android application that captures notifications and stores them in a
 
 ## Download
 
-https://github.com/Stingray07/NoTif/releases/download/v1.0.0/Notif.apk
+[Download](https://github.com/Stingray07/NoTif/releases/download/v.1.0.1/Notif.apk)
 
 ## Features
 
